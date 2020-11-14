@@ -6,10 +6,30 @@
         Project: Landing Page 
         Description: CPSC-44000 Landing Page
     -->
+
+    <!-- The top of file index.html -->
+    <html itemscope itemtype="http://schema.org/Article">
     <head>
+    <!-- BEGIN Pre-requisites -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js">
+        </script>
+        <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer>
+        </script>
+    <!-- END Pre-requisites -->
+    <script>
+        function start() {
+          gapi.load('auth2', function() 
+          {
+            auth2 = gapi.auth2.init(
+            {
+              client_id: '473179689529-n91i83j7u6nq30k3p2ofdn3gbsmitoa4.apps.googleusercontent.com',
+              // Scopes to request in addition to 'profile' and 'email'
+              //scope: 'additional_scope'
+            });
+          });
+        }
+      </script>
         <title>Marco Pettinato's Page</title>
-        <meta name = "google-sign-client_id" content = "473179689529-n91i83j7u6nq30k3p2ofdn3gbsmitoa4.apps.googleusercontent.com">
-        <script src = "https://apis.google.com/js/platform.js" async defer></script>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, 
         initialscale=1">
@@ -17,9 +37,16 @@
         <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500&display=swap" 
         rel="stylesheet">
         <link rel="stylesheet" href="lab5.css">
+        <button id="signinButton">Sign in with Google</button>
+        <script>
+        $('#signinButton').click(function() 
+    {
+        // signInCallback defined in step 6.
+        auth2.grantOfflineAccess().then(signInCallback);
+    });
+</script>
     </head>
     <body>
-        <div class = "g-signin2"></div>
         <div class="parallax">
             <div class="parallax-text">
                 <h1 class="heading">Marco Pettinato</h1>
@@ -104,5 +131,45 @@
         <div class="footer">
 
         </div>
+
+        
+
+        <script>
+            function signInCallback(authResult) 
+            {
+              if (authResult['code']) 
+              {
+            
+                // Hide the sign-in button now that the user is authorized, for example:
+                $('#signinButton').attr('style', 'display: none');
+            
+                // Send the code to the server
+                $.ajax(
+                {
+                  type: 'POST',
+                  url: 'http://example.com/storeauthcode',
+                  // Always include an `X-Requested-With` header in every AJAX request,
+                  // to protect against CSRF attacks.
+                  headers: 
+                  {
+                    'X-Requested-With': 'XMLHttpRequest'
+                  },
+                  contentType: 'application/octet-stream; charset=utf-8',
+                  success: function(result) 
+                  {
+                    // Handle or verify the server response.
+                  },
+                  processData: false,
+                  data: authResult['code']
+                });
+              } 
+              
+              else 
+              {
+                // There was an error.
+              }
+            }
+            </script>
+</script>
     </body>
 </html>
